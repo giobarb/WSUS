@@ -8,11 +8,11 @@ function Get-LoggedUser {
 
     Get-WinEvent  -Computer $ComputerName -FilterHashtable @{Logname='Security';ID=4672} -MaxEvents 1 |
     Select-Object @{N='User';E={$_.Properties[1].Value}}
-} #From event log, via Martin on Webex
+} #From event log in future
 
 #Initial data, currently XML
 $Config = Get-Content -raw C:\TS_WSUS\config.json | ConvertFrom-Json
-Get-GPO -Name $Config.GPOName | Get-GPOReport -ReportType XML > GPOXport.xml
+Get-GPO -Name $Config.GPOName | Get-GPOReport -ReportType XML > C:\TS-WSUS\GPOXport.xml
 
 #Find the Div with the SecGroups
 $Output = Get-Content -Raw .\GPOXport.xml | 
@@ -90,7 +90,7 @@ foreach($Computer in $Output)
     $ToSend += $ToAdd
 }
 $ToSend = $ToSend | Select-Object * -Unique
-$ToSend | Export-Csv -Path .\$(Get-Date -Format "yyyyMMdd")_$($env:USERDOMAIN)_FROMDC.csv -NoTypeInformation
+$ToSend | Export-Csv -Path C:\TS_WSUS\$(Get-Date -Format "yyyyMMdd")_$($env:USERDOMAIN)_FROMDC.csv -NoTypeInformation
 
 
 #get mail params from config.json, securestring in as well if needed
@@ -113,4 +113,3 @@ if($Config.SecureString -ne "") {
     Send-MailMessage @mailParams -Credential $credObject
 }
 else {Send-MailMessage @mailParams}
-#Deleting files is the very last one
