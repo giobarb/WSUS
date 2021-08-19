@@ -8,7 +8,7 @@ function Get-LoggedUser {
 
     Get-WinEvent  -Computer $ComputerName -FilterHashtable @{Logname='Security';ID=4672} -MaxEvents 1 |
     Select-Object @{N='User';E={$_.Properties[1].Value}}
-} #From event log in future
+} #From event log, via Martin on Webex
 
 #Initial data, currently XML
 $Config = Get-Content -raw C:\TS_WSUS\config.json | ConvertFrom-Json

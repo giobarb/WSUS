@@ -160,7 +160,7 @@ function Compare-Dates {
 } #Checks if the date of the file is more than 30 days.
 
 Clear-Host
-$ContentOfTSWSUS =  if($GivenFolder -ne $NULL){Get-ChildItem C:\TS_WSUS -Filter $GivenFolder | Select-Object Name,FullName}else{Get-ChildItem C:\TS_WSUS -Exclude "ARCH","OUT_ERR" | Select-Object Name,FullName}
+$ContentOfTSWSUS =  if($NULL -ne $GivenFolder){Get-ChildItem C:\TS_WSUS -Filter $GivenFolder | Select-Object Name,FullName}else{Get-ChildItem C:\TS_WSUS -Exclude "ARCH","OUT_ERR" | Select-Object Name,FullName}
 $WSUSComputers = ""
 $GPOReport = ""
 $Comparison = ""
@@ -237,6 +237,3 @@ foreach($Report in $ClientReports)
     $ToAdd = ""
     Remove-Item $Report.FullName
 }
-
-Write-Host "Press Enter to exit"
-Read-Host
