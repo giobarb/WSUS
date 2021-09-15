@@ -5,6 +5,7 @@
     $GivenFolder = $NULL
 )
 
+#Returns the status of the computer
 function Get-StatusOfComputer{
     param(
     $Status
@@ -16,8 +17,9 @@ function Get-StatusOfComputer{
         "<=" {return "Computer is not present in AD."}
         default {"N/A"}
     }
-} #Returns the status of the computer
+} 
 
+#Returns the date of LastSyncTime for export, need to loop through
 function Get-DateForMember{
     param(
     $Status,
@@ -28,8 +30,9 @@ function Get-DateForMember{
         "==" {$WSUSComputer.LastSyncTime}
         default {"N/A"}
     }
-} #Returns the date of LastSyncTime for export, need to loop through
+} 
 
+#Returns member for export, need to loop through to get all
 function Get-MemberForExport {
     param (
         $WSUSComputer,
@@ -45,8 +48,9 @@ function Get-MemberForExport {
         Date = Get-DateForMember -Status $Status -WSUSComputer $WSUSComputer
     }
     return $Member
-} #Returns member for export, need to loop through to get all
+} 
 
+#Creates the HTML file that will be posted into OUT_ERR, Status after FQDN
 function Write-Outputs{
     param(
         $ExportToARCH,
@@ -107,8 +111,9 @@ th {
 " #Footer
     $ToWrite | New-Item C:\TS_WSUS\OUT_ERR\$($Domain)\OUTERR_$(Get-Date -Format "yyyyMMdd")_$($Domain).html -Force | Out-Null
     $ExportToARCH | Export-Csv -Path C:\TS_WSUS\ARCH\$($Domain)\ARCH_$(Get-Date -Format "yyyyMMdd")_$($Domain).csv -NoTypeInformation -Force
-} #Creates the HTML file that will be posted into OUT_ERR, Status after FQDN
+} 
 
+#For folders that have no .csv file
 function Write-Error{
     param(
     $FolderName,
@@ -140,8 +145,9 @@ th {
 </body>
 </html>" #Content for empty folders.
     $ToWrite | New-Item C:\TS_WSUS\OUT_ERR\$($FolderName)\OUTERR_$(Get-Date -Format "yyyyMMdd")_$($FolderName).html -Force | Out-Null
-} #For folders that have no .csv file
+} 
 
+#Checks if the date of the file is more than 30 days.
 function Compare-Dates {
     param(
     $Report
@@ -157,7 +163,7 @@ function Compare-Dates {
     {
         return "$($DateOfReport.GetDateTimeFormats()[0]), this date is over 30 days old."
     }
-} #Checks if the date of the file is more than 30 days.
+} 
 
 Clear-Host
 $ContentOfTSWSUS =  if($NULL -ne $GivenFolder){Get-ChildItem C:\TS_WSUS -Filter $GivenFolder | Select-Object Name,FullName}else{Get-ChildItem C:\TS_WSUS -Exclude "ARCH","OUT_ERR" | Select-Object Name,FullName}
@@ -168,10 +174,6 @@ $ExportToARCH = @()
 $ExportToOUTERR = @()
 $ToAdd = ""
 $ClientReports = @()
-
-# Also I just discovered that this expression is perfectly legal
-# $penis = if("penis" -eq "isbig"){"it's massive"} else{"it's miniscular"}
-# Someone help me, also Compare-Object is exactly what I needed, and I never knew I needed it
 
 foreach($Folder in $ContentOfTSWSUS)
 {
@@ -196,7 +198,12 @@ foreach($Report in $ClientReports)
             $ExportToARCH += $ToAdd
             $ExportToOUTERR += $ToAdd
         }
-    } 
+    }
+    
+    # Also I just discovered that this expression is perfectly legal
+    # $penis = if("penis" -eq "isbig"){"it's massive"} else{"it's miniscular"}
+    # Someone help me, also Compare-Object is exactly what I needed, and I never knew I needed it
+    
     else #If there are computers found in WSUS process them
     {
         $Comparison = Compare-Object -DifferenceObject $GPOReport.DNSHostName.ToLower() -ReferenceObject $WSUSComputers.FullDomainName.ToLower() -IncludeEqual
