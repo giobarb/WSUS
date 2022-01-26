@@ -19,3 +19,5 @@ There are two prerequisites for these scripts to run smoothly.
 Create a folder under the _C:\\_ drive called _TS_WSUS_ and create two folders named _ARCH_ and _OUT_ERR_, next create a folder for each of the clients you have for example _Contoso_,_Montoso_,_Cocktoso_ and _Dontoso_. It should look as such.
 ![WSUS Folder Structure under C:/ drive](https://raw.githubusercontent.com/giobarb/FUCK-WSUS/main/Images/folderStructureWSUS.png)After you run the _LocalDCGPOExport.ps1_ file you will receive a .csv as an attachment to your mail message, you put this file into your clients folder name, for example _Contoso_ as such.
 ![Content of your client folder](https://raw.githubusercontent.com/giobarb/FUCK-WSUS/main/Images/ContentOfClientFolder.png)
+
+After this just run the RemoteTSWSUS.ps1, and you will get a log alongside an HTML report in your OUT_ERR and OUT_LOG folders.
